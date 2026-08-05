@@ -1,0 +1,35 @@
+# Environment for the experiments of
+#   "Using Citations to Estimate the Richness of Lost Literary Heritage:
+#    the case of Latin Archaic Poetry"
+#
+# Tested with Python 3.12.3 on Linux. To recreate:
+#
+#     python3 -m venv frag_env
+#     source frag_env/bin/activate
+#     pip install -r requirements.txt
+#
+# Direct dependencies only; pip resolves the rest. Versions are pinned to those the reported
+# figures were produced with.
+
+# --- core numerics, used by every module -----------------------------------------------
+numpy==2.5.1
+scipy==1.18.0
+pandas==3.0.3
+openpyxl==3.1.5          # pandas.read_excel backend for corpus_fragments_normalise.xlsx
+matplotlib==3.11.1
+
+# --- NUTS sampling of the Poisson-lognormal model (Poisson_lognormal.ipynb) -------------
+# Imported lazily in lost_texts.fit_pln, so Poisson_gamma.ipynb runs without them.
+# CPU build; the notebooks run four chains on host devices, no GPU required.
+jax==0.11.0
+jaxlib==0.11.0
+numpyro==0.21.0
+
+# --- running the notebooks --------------------------------------------------------------
+jupyterlab==4.6.1
+ipykernel==7.3.0
+
+# The LCMCR benchmark (lcmcr_check.py) additionally needs R with the LCMCR package, which
+# itself needs GSL. It is optional: both notebooks fall back on the values quoted in their
+# text when lcmcr_results.csv is absent.
+#     sudo apt install r-base libgsl-dev && Rscript -e 'install.packages("LCMCR")'
