@@ -1,9 +1,10 @@
 """Shared code for the two companion notebooks on the estimation of the number of lost
 Latin texts:
 
-  * ``Poisson_lognormal.ipynb`` -- Poisson-lognormal model with cell covariates, marginalised
+  * ``notebooks/Poisson_lognormal.ipynb`` -- Poisson-lognormal model (separable reference model,
+    plus an exploratory cell-covariate extension), marginalised
     and sampled by NUTS (numpyro);
-  * ``Poisson_gamma.ipynb``     -- Gamma-Poisson model, sampled by Gibbs with data augmentation.
+  * ``notebooks/Poisson_gamma.ipynb``     -- Gamma-Poisson model, sampled by Gibbs with data augmentation.
 
 Both notebooks analyse **exactly the same matrix** N[i, j] = number of fragments of work i cited
 by source j, and both target the same estimand S(tau) = the number of works whose detection
@@ -63,7 +64,7 @@ __all__ = [
     "setup_numpyro", "build_strata", "fit_pln", "rhat_ess",
     # Gamma-Poisson
     "slice_shape", "gamma_and_log", "gibbs", "merge_chains", "print_rhat_table",
-    # convergence diagnostic (R-hat-infinity, Moins et al. 2023)
+    # convergence diagnostic (R-hat-infinity, Moins et al. 2025)
     "rhat_inf", "rhat_inf_threshold", "R_INF_TABLE", "R_INF_TABLE_M",
     # estimand
     "TAU_GRID", "TAU_FINE", "S_tau", "print_S_tau_table", "plot_S_tau_curve", "plot_S_tau_comparison",
@@ -298,7 +299,7 @@ class Corpus:
               f"source-earlier-than-work pairs (D=0 imposed): {early}/{self.Sobs * self.J}")
 
 
-def load_corpus(path, col_scenario=1, row_keys=("Author", "Work"),
+def load_corpus(path, col_scenario=2, row_keys=("Author", "Work"),
                 col_key="Author_fragment", drop_dubia=False, binarize=False):
     """Builds N[i,j] (citation counts) together with the work/source attributes used by the cell
        covariates:
@@ -310,7 +311,8 @@ def load_corpus(path, col_scenario=1, row_keys=("Author", "Work"),
        A missing Author (anonymous or collective works, e.g. Carmen Saliare) is filled with
        "Anonymous" instead of being dropped, so that these works are not lost from the matrix.
 
-       col_scenario controls the handling of missing Author_fragment (anonymous citing source,
+       col_scenario (default 2, the convention used throughout the paper and both notebooks)
+       controls the handling of missing Author_fragment (anonymous citing source,
        e.g. scholia or glossaries with no identified author -- 93 rows out of 2080):
          1 : all of them pooled into a single "Anonymous" column            (73 columns)
          2 : composite key Author_fragment | Work_fragment for ALL sources,
@@ -657,8 +659,8 @@ def gibbs(N, n_iter=200000, burn=100000, thin=10, seed=0,
 # -----------------------------------------------------------------------------
 # Convergence diagnostic: R-hat-infinity
 #
-# Moins, Arbel, Dutfoy & Girard (2023), "On the use of a local R-hat to improve
-# MCMC convergence diagnostic", Bayesian Analysis 18(4), 1033-1059. The reference
+# Moins, Arbel, Dutfoy & Girard (2025), "On the use of a local R-hat to improve
+# MCMC convergence diagnostic", Bayesian Analysis 20(1), 131-156. The reference
 # implementation is vendored in rhat_infinity.py and used as is.
 #
 # The traditional Gelman-Rubin R-hat compares a between-chain to a within-chain
@@ -694,7 +696,7 @@ R_INF_TABLE = {
 
 def rhat_inf_threshold(m, alpha=0.05, split=True):
     """Threshold for R-hat-infinity with `m` chains at level `alpha`, interpolated in Table 2
-       of Moins et al. (2023). With `split=True` the effective number of chains is 2m, so that
+       of Moins et al. (2025). With `split=True` the effective number of chains is 2m, so that
        the usual four split chains give 1.031 at the 5% level (the 1.03 recommended in the
        paper) rather than the 1.01 rule of thumb of the traditional R-hat."""
     if split:
@@ -737,7 +739,7 @@ def print_rhat_table(post, chains, keys, alpha=0.05):
         flag = "" if rh < thr else "   <-- ABOVE THRESHOLD"
         print(f"{k:6s}  median {md:9.3f}   95% CI [{lo:8.3f}, {hi:9.3f}]   "
               f"R-hat-inf {rh:.3f}{flag}")
-    print(f"\nR-hat-infinity (Moins et al. 2023), split version on {len(chains)} chains: "
+    print(f"\nR-hat-infinity (Moins et al. 2025), split version on {len(chains)} chains: "
           f"threshold at the {alpha:.0%} level = {thr:.3f}")
 
 

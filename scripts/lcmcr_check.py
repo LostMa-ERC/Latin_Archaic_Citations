@@ -13,11 +13,12 @@ definitions:
 Each is fitted under every combination of truncation K in {4, 6, 8} and DP prior Gamma(a, a) with
 a in {0.25, 1}, so that the notebooks can report the sensitivity of the answer to both.
 
-Writes lcmcr_results.csv (one row per paradigm x K x prior), which the two notebooks read without
-needing R. Requires R with the LCMCR package (which itself needs GSL); the notebooks fall back on
+Writes results/lcmcr_results.csv (one row per paradigm x K x prior), which the two notebooks read
+without needing R. The intermediate incidence matrices (results/lcmcr_input_*.csv) are not
+committed. Requires R with the LCMCR package (which itself needs GSL); the notebooks fall back on
 the values quoted in their text if the file is absent.
 
-Usage:  python lcmcr_check.py
+Usage (from the repository root):  python scripts/lcmcr_check.py
 """
 import os
 import subprocess
@@ -26,10 +27,13 @@ import sys
 import numpy as np
 import pandas as pd
 
-from lost_texts import load_corpus
-
 HERE = os.path.dirname(os.path.abspath(__file__))
-PATH = os.path.join(HERE, "corpus_fragments_normalise.xlsx")
+ROOT = os.path.dirname(HERE)
+sys.path.insert(0, os.path.join(ROOT, "src"))
+from lost_texts import load_corpus  # noqa: E402
+
+PATH = os.path.join(ROOT, "data", "corpus_fragments_normalise.xlsx")
+RESULTS = os.path.join(ROOT, "results")
 
 
 def century_lists(corpus):
@@ -59,19 +63,19 @@ def main():
         keep = X.sum(1) >= 1                       # LCMCR forbids all-zero rows
         X = X[keep]
         df = pd.DataFrame(X, columns=labels)
-        df.to_csv(os.path.join(HERE, f"lcmcr_input_{name}.csv"), index=False)
+        df.to_csv(os.path.join(RESULTS, f"lcmcr_input_{name}.csv"), index=False)
         deg = X.sum(1)
         print(f"{name:10s} J={X.shape[1]:4d}  S_obs={X.shape[0]:3d}  "
               f"Q1={int((deg == 1).sum()):3d}  Q2={int((deg == 2).sum()):3d}  "
               f"max degree={int(deg.max())}")
 
     r = subprocess.run(["Rscript", os.path.join(HERE, "lcmcr_check.R")],
-                       cwd=HERE, capture_output=True, text=True)
+                       cwd=RESULTS, capture_output=True, text=True)
     sys.stdout.write(r.stdout)
     sys.stderr.write(r.stderr)
     if r.returncode != 0:
         raise SystemExit(f"Rscript failed with code {r.returncode}")
-    print(pd.read_csv(os.path.join(HERE, "lcmcr_results.csv")).to_string(index=False))
+    print(pd.read_csv(os.path.join(RESULTS, "lcmcr_results.csv")).to_string(index=False))
 
 
 if __name__ == "__main__":

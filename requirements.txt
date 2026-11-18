@@ -15,11 +15,11 @@
 numpy==2.5.1
 scipy==1.18.0
 pandas==3.0.3
-openpyxl==3.1.5          # pandas.read_excel backend for corpus_fragments_normalise.xlsx
+openpyxl==3.1.5          # pandas.read_excel backend for data/corpus_fragments_normalise.xlsx
 matplotlib==3.11.1
 
 # --- NUTS sampling of the Poisson-lognormal model (Poisson_lognormal.ipynb) -------------
-# Imported lazily in lost_texts.fit_pln, so Poisson_gamma.ipynb runs without them.
+# Imported lazily in src/lost_texts.fit_pln, so Poisson_gamma.ipynb runs without them.
 # CPU build; the notebooks run four chains on host devices, no GPU required.
 jax==0.11.0
 jaxlib==0.11.0
@@ -29,7 +29,7 @@ numpyro==0.21.0
 jupyterlab==4.6.1
 ipykernel==7.3.0
 
-# The LCMCR benchmark (lcmcr_check.py) additionally needs R with the LCMCR package, which
+# The LCMCR benchmark (scripts/lcmcr_check.py) additionally needs R with the LCMCR package, which
 # itself needs GSL. It is optional: both notebooks fall back on the values quoted in their
-# text when lcmcr_results.csv is absent.
+# text when results/lcmcr_results.csv is absent.
 #     sudo apt install r-base libgsl-dev && Rscript -e 'install.packages("LCMCR")'

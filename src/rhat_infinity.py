@@ -1,7 +1,7 @@
 """R-hat-infinity: the local MCMC convergence diagnostic of
 
-    T. Moins, J. Arbel, A. Dutfoy & S. Girard (2023), "On the use of a local R-hat to improve
-    MCMC convergence diagnostic", Bayesian Analysis 18(4), 1033-1059.
+    T. Moins, J. Arbel, A. Dutfoy & S. Girard (2025), "On the use of a local R-hat to improve
+    MCMC convergence diagnostic", Bayesian Analysis 20(1), 131-156.
 
 Reference implementation, vendored here so that the two notebooks reproduce without an extra
 package. Only `rhat_infinity` is called from `lost_texts.py` (through `lost_texts.rhat_inf`).

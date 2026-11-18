@@ -1,0 +1,17 @@
+# Python / Jupyter
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+frag_env/
+
+# Intermediate files written by scripts/lcmcr_check.py
+results/lcmcr_input_*.csv
+
+# Optional export, read by no notebook
+results/stau_gamma.npz
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/

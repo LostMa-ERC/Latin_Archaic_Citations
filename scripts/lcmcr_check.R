@@ -1,5 +1,6 @@
 ## Fits LCMCR (Manrique-Vallier 2016) on the incidence matrices exported by lcmcr_check.py.
 ## One fit per (paradigm, truncation K, DP prior a_alpha=b_alpha); writes lcmcr_results.csv.
+## Run from results/ (lcmcr_check.py sets the working directory), where the inputs are written.
 suppressMessages(library(LCMCR))
 
 fit_one <- function(X, K, a, seed = 1) {
